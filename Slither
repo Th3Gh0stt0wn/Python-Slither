@@ -1,0 +1,124 @@
+import pygame
+import math
+import random
+
+pygame.init()
+pygame.display.set_caption("Slither")
+screen = pygame.display.set_mode((1000,1000))
+clock = pygame.time.Clock()
+
+#Gam variables
+doExit = False
+
+#player Variables
+xPos = 200
+yPos = 200
+Vx = 1
+Vy = 1
+score = 0
+oldX = 200
+oldY = 200
+counter = 0
+
+#Classes
+class pellet:
+    def __init__(self, xPos, yPos, red, green, blue, radius, collide):
+        self.xPos = xPos
+        self.yPos = yPos
+        self.red = red
+        self.green = green
+        self.blue = blue
+        self.radius = radius
+    def draw(self):
+        pygame.draw.circle(screen, (self.red, self.green, self.blue), (self.xPos, self.yPos), self.radius,)
+    def collide(self, x, y):
+        if math.sqrt((x-self.xPos)*(x-self.xPos)+(y-self.yPos)*(y-self.yPos)) < self.radius +6:
+            self.xPos = random.randrange(0,400)
+            self.yPos = random.randrange(0,400)
+            self.red = random.randrange(0,255)
+            self.green = random.randrange(0,255)
+            self.blue = random.randrange(0,255)
+            self.radius = random.randrange(0,30)
+            return True
+        
+class TailSeg:
+    def __init__(self, xPos, yPos):
+        self.xPos = xPos
+        self.yPos = yPos
+    def update(self, xPos, yPos):
+        self.xPos = xPos
+        self.yPos = yPos
+    def draw(self):
+        pygame.draw.circle(screen, (237, 185, 14), (self.xPos, self.yPos), 12)
+        
+
+        
+#end of class pellet
+        
+pellets = list()
+tail = list()
+
+for i in range(10):
+    pellets.append(pellet(random.randrange(0,400), random.randrange(0,400), random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255), random.randrange(5,30), random.randrange(0,30)))
+
+#game loop
+while not doExit:
+    
+#event/input
+    clock.tick(10000)
+    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            doExit = True
+            
+    if event.type == pygame.MOUSEMOTION:
+        mousePos = event.pos
+        
+        if mousePos[0]>xPos:
+            Vx = 1
+        else:
+            Vx = -1
+            
+        if mousePos[1]>yPos:
+            Vy = 1
+        else:
+            Vy = -1
+#physics
+            
+    counter+=1
+    if counter == 20:
+        counter = 0
+        oldX = xPos
+        oldY = yPos
+        
+        if(len(tail)>2):
+            for i in range(len(tail)):
+                
+                tail[len(tail)-i-1].xPos = tail[len(tail)-i-2].xPos
+                tail[len(tail)-i-1].yPos = tail[len(tail)-i-2].yPos
+                
+            if(len(tail)>0):
+                tail[0].update(oldX, oldY)
+        
+        #circle possition
+        xPos += Vx
+        yPos += Vy
+        
+        #check for collision
+        for i in range(10):
+            if pellets[i].collide(xPos, yPos) == True:
+                tail.append(TailSeg(oldX, oldY))
+    
+#render section
+    screen.fill((72,122,122))
+    pygame.draw.circle(screen, (237, 185, 14), (xPos, yPos), 12)
+    for i in range(10):
+        pellets[i].draw()
+    for i in range(len(tail)):
+        tail[i].draw()
+    pygame.display.flip()
+    
+#end game loop
+    
+pygame.quit
+                     
