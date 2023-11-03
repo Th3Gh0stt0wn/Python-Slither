@@ -4,7 +4,7 @@ import random
 
 pygame.init()
 pygame.display.set_caption("Slither")
-screen = pygame.display.set_mode((1000,1000))
+screen = pygame.display.set_mode((400,400))
 clock = pygame.time.Clock()
 
 #Gam variables
