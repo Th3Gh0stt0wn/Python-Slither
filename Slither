@@ -49,7 +49,7 @@ class TailSeg:
         self.xPos = xPos
         self.yPos = yPos
     def draw(self):
-        pygame.draw.circle(screen, (237, 185, 14), (self.xPos, self.yPos), 12)
+        pygame.draw.circle(screen, (171, 52, 235), (self.xPos, self.yPos), 12)
         
 
         
@@ -83,6 +83,9 @@ while not doExit:
             Vy = 1
         else:
             Vy = -1
+            
+        if score >=255:
+            doExit = True
 #physics
             
     counter+=1
@@ -108,17 +111,21 @@ while not doExit:
         for i in range(10):
             if pellets[i].collide(xPos, yPos) == True:
                 tail.append(TailSeg(oldX, oldY))
+                score += 1
+                print("score:", score)
     
 #render section
-    screen.fill((72,122,122))
-    pygame.draw.circle(screen, (237, 185, 14), (xPos, yPos), 12)
+    screen.fill((197, 226, 232))
+    pygame.draw.circle(screen, (171, 52, 235), (xPos, yPos), 12)
     for i in range(10):
         pellets[i].draw()
     for i in range(len(tail)):
         tail[i].draw()
+    font = pygame.font.Font(None, 74)
+    text = font.render(str(score), 1, (141, 178, 186))
+    screen.blit(text, (10,10))
     pygame.display.flip()
     
 #end game loop
     
 pygame.quit
-                     
